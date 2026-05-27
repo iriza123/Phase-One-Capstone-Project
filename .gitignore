@@ -2,25 +2,21 @@
 .idea/
 *.iml
 out/
+
+# Compiled class files
 *.class
 
-# Build output
-build/
-dist/
+# JavaFX / build output
 target/
+build/
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 
-# Logs
+# Environment / credentials — never commit these
+*.env
+*.properties
+
+# Log files
 *.log
-
-# Database credentials — never commit
-src/util/DBConnection.java.bak
-
-# CSV exports
-*.csv
-
-# JavaFX SDK (add your own locally)
-javafx-sdk/
