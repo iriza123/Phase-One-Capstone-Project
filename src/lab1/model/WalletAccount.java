@@ -3,7 +3,6 @@ package lab1.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-// LAB 1 - OOP: Inheritance. Wallet = instant transfers, no fees, no limits.
 public class WalletAccount extends Account {
 
     public WalletAccount() {
