@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-// LAB 3 - JavaFX: Admin view of ALL transactions across all customers
 public class AdminHistoryScreen extends BaseScreen {
 
     private final TransactionService txSvc = new TransactionService();

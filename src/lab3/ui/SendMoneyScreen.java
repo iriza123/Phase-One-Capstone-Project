@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import java.math.BigDecimal;
 import java.util.List;
 
-// LAB 3 - JavaFX: Send Money screen (MoMo-style transfer)
 public class SendMoneyScreen extends BaseScreen {
 
     private final AccountService     accSvc = new AccountService();

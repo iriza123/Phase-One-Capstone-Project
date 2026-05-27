@@ -11,12 +11,6 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
-/**
- * LAB 3 - Profile Screen
- * Shows customer info, their accounts, and allows PIN change.
- * A Wallet account is created automatically on registration.
- * Users can optionally open a Savings account here.
- */
 public class ProfileScreen extends BaseScreen {
 
     private final CustomerService custSvc = new CustomerService();
@@ -71,20 +65,6 @@ public class ProfileScreen extends BaseScreen {
             accountsList.getChildren().add(new Label("Could not load accounts."));
         }
 
-        // ── Open Savings Account (optional) ───────────────────────────
-        Label savingsNote = new Label("Want to save money? Open a Savings Account (1.5% fee on withdrawals, max 5/month).");
-        savingsNote.setStyle("-fx-font-size:12px;-fx-text-fill:rgba(255,255,255,0.45);-fx-font-family:'Times New Roman';-fx-wrap-text:true;");
-        savingsNote.setWrapText(true);
-
-        Button openSavingsBtn = new Button("Open Savings Account");
-        openSavingsBtn.getStyleClass().add("btn-success");
-        openSavingsBtn.setOnAction(e -> {
-            try {
-                Account a = accSvc.createSavings(user.getCustomerId());
-                showMsg("Savings account created: " + a.getAccountNumber(), true);
-            } catch (Exception ex) { showMsg(ex.getMessage(), false); }
-        });
-
         // ── Change PIN ────────────────────────────────────────────────
         Label pinTitle = new Label("Change PIN");
         pinTitle.setStyle("-fx-font-size:16px;-fx-font-weight:bold;-fx-text-fill:white;-fx-font-family:'Times New Roman';");
@@ -112,7 +92,6 @@ public class ProfileScreen extends BaseScreen {
         card.getChildren().addAll(
             title, infoBox,
             accTitle, accountsList,
-            savingsNote, openSavingsBtn,
             new Separator(), pinTitle,
             fieldGroup("Current PIN", oldPin),
             fieldGroup("New PIN", newPin),

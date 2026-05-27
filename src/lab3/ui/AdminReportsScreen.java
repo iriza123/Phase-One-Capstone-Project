@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-// LAB 3 - Admin: Reports - export all transactions, daily summary
 public class AdminReportsScreen extends BaseScreen {
 
     private final TransactionService txSvc = new TransactionService();

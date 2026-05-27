@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-// LAB 3 - Exercise 3.3: Transaction Reports - CSV export, daily summary, customer statement
 public class ReportsScreen extends BaseScreen {
 
     private final TransactionService txSvc = new TransactionService();

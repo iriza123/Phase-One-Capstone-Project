@@ -17,7 +17,6 @@ import javafx.stage.Stage;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-// LAB 3 - JavaFX: USER dashboard (MoMo-style home screen)
 public class DashboardScreen {
 
     private final Stage stage;
@@ -77,15 +76,12 @@ public class DashboardScreen {
         content.setPadding(new Insets(24));
         content.setStyle("-fx-background-color:transparent;");
 
-        // Balance cards
         content.getChildren().add(buildBalanceCards());
 
-        // MoMo-style action tiles
         Label actTitle = new Label("What would you like to do?");
         actTitle.setStyle("-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:white;-fx-font-family:'Times New Roman';");
         content.getChildren().addAll(actTitle, buildActionGrid());
 
-        // Recent transactions
         Label txTitle = new Label("Recent Transactions");
         txTitle.setStyle("-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:white;-fx-font-family:'Times New Roman';");
         content.getChildren().addAll(txTitle, buildRecentTransactions());
@@ -96,7 +92,6 @@ public class DashboardScreen {
         return scroll;
     }
 
-    // Show balance for each account the user has
     private HBox buildBalanceCards() {
         HBox row = new HBox(16);
         row.setAlignment(Pos.CENTER_LEFT);
@@ -132,21 +127,19 @@ public class DashboardScreen {
         return row;
     }
 
-    // MoMo-style colored action tiles
     private GridPane buildActionGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(14);
         grid.setVgap(14);
 
         Object[][] actions = {
-            {"SEND MONEY",  "#D4A017", "Send Money"},
-            {"DEPOSIT",     "#27AE60", "Deposit"},
-            {"WITHDRAW",    "#C0392B", "Withdraw"},
-            {"SAVINGS",     "#2980B9", "Savings"},
-            {"HISTORY",     "#8E44AD", "History"},
-            {"REPORTS",     "#6D4C41", "Reports"},
-            {"STATEMENT",   "#1B6CA8", "Statement"},
-            {"PROFILE",     "#556B2F", "Profile"}
+            {"SEND MONEY", "#D4A017", "Send Money"},
+            {"DEPOSIT",    "#27AE60", "Deposit"},
+            {"WITHDRAW",   "#C0392B", "Withdraw"},
+            {"SAVINGS",    "#2980B9", "Savings"},
+            {"HISTORY",    "#8E44AD", "History"},
+            {"REPORTS",    "#6D4C41", "Reports"},
+            {"PROFILE",    "#556B2F", "Profile"}
         };
         for (int i = 0; i < actions.length; i++) {
             grid.add(momoTile((String)actions[i][0], (String)actions[i][1], (String)actions[i][2]),
@@ -177,7 +170,6 @@ public class DashboardScreen {
         return tile;
     }
 
-    // Show last 10 transactions
     private TableView<Transaction> buildRecentTransactions() {
         TableView<Transaction> tv = new TableView<>();
         tv.getStyleClass().add("table-view");
@@ -216,7 +208,6 @@ public class DashboardScreen {
             case "Savings"    -> new SavingsScreen(stage).show();
             case "History"    -> new HistoryScreen(stage).show();
             case "Reports"    -> new ReportsScreen(stage).show();
-            case "Statement"  -> new CustomerStatementScreen(stage).show();
             case "Profile"    -> new ProfileScreen(stage).show();
         }
     }

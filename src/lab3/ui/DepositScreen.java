@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import java.math.BigDecimal;
 import java.util.List;
 
-// LAB 3 - JavaFX: Deposit screen
 public class DepositScreen extends BaseScreen {
 
     private final AccountService     accSvc = new AccountService();

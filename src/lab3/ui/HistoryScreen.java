@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-// LAB 3 - JavaFX: Transaction history screen
 public class HistoryScreen extends BaseScreen {
 
     private final TransactionService txSvc = new TransactionService();

@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 import java.math.BigDecimal;
 import java.util.List;
 
-// LAB 3 - JavaFX: Withdraw screen
 public class WithdrawScreen extends BaseScreen {
 
     private final AccountService     accSvc = new AccountService();
