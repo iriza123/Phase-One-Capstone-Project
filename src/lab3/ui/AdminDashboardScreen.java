@@ -11,7 +11,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-// LAB 3 - JavaFX: ADMIN dashboard
 public class AdminDashboardScreen {
 
     private final Stage stage;
@@ -120,9 +119,26 @@ public class AdminDashboardScreen {
             adminTile("Manage\nCustomers",  "#556B2F", () -> new AdminScreen(stage).show()),
             adminTile("All\nTransactions",  "#2980B9", () -> new AdminHistoryScreen(stage).show()),
             adminTile("All\nAccounts",      "#D4A017", () -> new AdminAccountsScreen(stage).show()),
-            adminTile("Reports\n& Export",  "#8E44AD", () -> new AdminReportsScreen(stage).show())
+            adminTile("Reports\n& Export",  "#8E44AD", () -> new AdminReportsScreen(stage).show()),
+            adminTile("Reset\nDatabase",    "#C0392B", this::confirmReset)
         );
         return row;
+    }
+
+    private void confirmReset() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Reset Database");
+        alert.setHeaderText("Delete All Data");
+        alert.setContentText(
+            "This deletes ALL customers, accounts and transactions — including your admin account.\n" +
+            "You will need to re-register after this.\n\nAre you sure?");
+        alert.showAndWait().ifPresent(btn -> {
+            if (btn == ButtonType.OK) {
+                lab2.db.DatabaseConnection.clearAllData();
+                SessionManager.logout();
+                new LoginScreen(stage).show();
+            }
+        });
     }
 
     private VBox adminTile(String label, String color, Runnable action) {

@@ -7,7 +7,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-// Shared layout helper used by all screens to avoid code repetition
 public abstract class BaseScreen {
 
     protected final Stage stage;
@@ -15,7 +14,6 @@ public abstract class BaseScreen {
 
     public BaseScreen(Stage stage) { this.stage = stage; }
 
-    // Top navigation bar with back button and logo
     protected HBox buildTopBar(String title) {
         HBox bar = new HBox();
         bar.setAlignment(Pos.CENTER_LEFT);
@@ -46,7 +44,6 @@ public abstract class BaseScreen {
         return bar;
     }
 
-    // Frosted glass form card
     protected VBox buildFormCard() {
         VBox card = new VBox(18);
         card.getStyleClass().add("form-card");
@@ -54,7 +51,6 @@ public abstract class BaseScreen {
         return card;
     }
 
-    // Label + field group
     protected VBox fieldGroup(String label, javafx.scene.Node field) {
         VBox g = new VBox(6);
         Label l = new Label(label);
@@ -63,7 +59,6 @@ public abstract class BaseScreen {
         return g;
     }
 
-    // Styled text field
     protected TextField styledField(String prompt) {
         TextField tf = new TextField();
         tf.getStyleClass().add("text-field-styled");
@@ -71,7 +66,6 @@ public abstract class BaseScreen {
         return tf;
     }
 
-    // Styled combo box
     protected ComboBox<String> styledCombo(String prompt) {
         ComboBox<String> cb = new ComboBox<>();
         cb.getStyleClass().add("combo-box-styled");
@@ -80,7 +74,6 @@ public abstract class BaseScreen {
         return cb;
     }
 
-    // Initialize message label
     protected Label initMessage() {
         messageLabel = new Label();
         messageLabel.setVisible(false);
@@ -89,7 +82,6 @@ public abstract class BaseScreen {
         return messageLabel;
     }
 
-    // Show success or error message
     protected void showMsg(String msg, boolean ok) {
         messageLabel.setText(msg);
         messageLabel.getStyleClass().removeAll("alert-success", "alert-error");
@@ -97,7 +89,6 @@ public abstract class BaseScreen {
         messageLabel.setVisible(true);
     }
 
-    // Wrap content in a full-screen root with green gradient background
     protected BorderPane wrapInRoot(HBox topBar, javafx.scene.Node content) {
         BorderPane bp = new BorderPane();
         bp.setStyle("-fx-background-color:linear-gradient(to bottom right,#0D2B1A,#1B4332,#2D5A27);");

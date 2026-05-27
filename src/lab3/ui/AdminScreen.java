@@ -11,7 +11,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.List;
 
-// LAB 3 - JavaFX: Admin customer management screen
 public class AdminScreen extends BaseScreen {
 
     private final CustomerService custSvc = new CustomerService();

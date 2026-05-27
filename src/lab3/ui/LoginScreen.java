@@ -13,7 +13,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-// LAB 3 - JavaFX: Login screen with 5-digit PIN only
 public class LoginScreen {
 
     private final Stage stage;

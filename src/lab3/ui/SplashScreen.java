@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-// LAB 3 - JavaFX: Animated splash screen shown on startup
 public class SplashScreen {
 
     private final Stage splashStage;

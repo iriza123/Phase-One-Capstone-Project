@@ -11,7 +11,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.List;
 
-// LAB 3 - Admin: View all accounts and delete inactive ones
 public class AdminAccountsScreen extends BaseScreen {
 
     private final AccountService accSvc = new AccountService();

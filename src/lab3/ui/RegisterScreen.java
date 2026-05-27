@@ -9,7 +9,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-// LAB 3 - JavaFX: Register new customer (no demo data - only real registrations)
 public class RegisterScreen {
 
     private final Stage stage;
