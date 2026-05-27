@@ -21,7 +21,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 
-// LAB 3 - Service: business logic for all transactions (MoMo-style)
 public class TransactionService {
 
     private final TransactionDAO      txDAO  = new TransactionDAOImpl();
@@ -29,14 +28,12 @@ public class TransactionService {
     private final AccountService      accSvc = new AccountService();
     private static final Random       RNG    = new Random();
 
-    // Generate a unique reference ID: e.g. DEP-20250526-12345
     private String generateRef(String prefix) {
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String rand = String.format("%05d", RNG.nextInt(99999));
         return prefix + "-" + date + "-" + rand;
     }
 
-    // DEPOSIT: add money to an account
     public Transaction deposit(int accountId, BigDecimal amount, String description) throws Exception {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0)
             throw new InvalidAmountException("Deposit amount must be positive.");
@@ -58,7 +55,6 @@ public class TransactionService {
         return tx;
     }
 
-    // WITHDRAW: take money from an account
     public Transaction withdraw(int accountId, BigDecimal amount, String description) throws Exception {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0)
             throw new InvalidAmountException("Withdrawal amount must be positive.");
@@ -66,7 +62,11 @@ public class TransactionService {
         Account account = accSvc.getById(accountId);
         accSvc.checkActive(account);
 
-        // Calculate fee for savings accounts
+        // Load this month's withdrawal count from DB so SavingsAccount.withdraw() enforces the 5/month limit correctly
+        if (account instanceof SavingsAccount sa) {
+            sa.setMonthlyWithdrawals(txDAO.countMonthlyWithdrawals(accountId));
+        }
+
         BigDecimal fee = BigDecimal.ZERO;
         if (account instanceof SavingsAccount sa) fee = sa.calculateFee(amount);
 
@@ -88,12 +88,6 @@ public class TransactionService {
         return tx;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // BONUS: JDBC Transaction Rollback
-    // sendMoney wraps all DB operations in a single JDBC transaction.
-    // If anything fails after debiting the sender, the entire operation
-    // is rolled back — no money is lost or created.
-    // ─────────────────────────────────────────────────────────────────────────
     public Transaction sendMoney(int fromAccountId, String toAccountNumber,
                                  BigDecimal amount, String description) throws Exception {
 
@@ -116,35 +110,27 @@ public class TransactionService {
         String ref = generateRef("TRF");
         if (prDAO.isProcessed(ref)) throw new DuplicateTransactionException(ref);
 
-        // Get the shared connection and start a JDBC transaction
         Connection conn = DatabaseConnection.getConnection();
-        conn.setAutoCommit(false); // BEGIN transaction
+        conn.setAutoCommit(false);
 
         try {
-            // Step 1: Debit sender
             from.withdraw(amount);
             accSvc.updateBalance(fromAccountId, from.getBalance());
 
-            // Step 2: Credit receiver
             to.deposit(amount);
             accSvc.updateBalance(to.getAccountId(), to.getBalance());
 
-            // Step 3: Record the transaction
             Transaction tx = new Transaction(ref, fromAccountId, to.getAccountId(), "TRANSFER",
                 amount, BigDecimal.ZERO, "SUCCESS",
                 description == null || description.isBlank() ? "Send Money" : description);
             txDAO.save(tx);
-
-            // Step 4: Mark as processed (duplicate prevention)
             prDAO.markProcessed(ref, "SUCCESS");
 
-            // All steps succeeded — commit everything atomically
             conn.commit();
             conn.setAutoCommit(true);
             return tx;
 
         } catch (Exception e) {
-            // Something failed — roll back ALL changes so no money is lost
             conn.rollback();
             conn.setAutoCommit(true);
             throw new Exception("Transfer failed and was rolled back: " + e.getMessage());

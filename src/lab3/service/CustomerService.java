@@ -10,17 +10,10 @@ import java.sql.SQLException;
 import java.util.Base64;
 import java.util.List;
 
-// LAB 3 - Service: business logic for customer operations
 public class CustomerService {
 
     private final CustomerDAO dao = new CustomerDAOImpl();
 
-    /**
-     * Register a new customer.
-     * - Phone must be exactly 10 digits
-     * - PIN must be exactly 5 digits
-     * - Automatically creates one Wallet account for the new customer
-     */
     public Customer register(String firstName, String lastName,
                              String email, String phone, String pin) throws Exception {
 
@@ -76,10 +69,6 @@ public class CustomerService {
     // Maximum failed PIN attempts before account is locked
     private static final int MAX_FAILED_ATTEMPTS = 3;
 
-    /**
-     * Login: verify phone + 5-digit PIN.
-     * Locks account after 3 consecutive wrong PINs.
-     */
     public Customer login(String phone, String pin) throws Exception {
         Customer c = dao.findByPhone(phone.trim())
             .orElseThrow(() -> new Exception("No account found for: " + phone));
@@ -106,7 +95,6 @@ public class CustomerService {
         return c;
     }
 
-    // Lock account by setting status to LOCKED
     private void lockAccount(int customerId) throws SQLException {
         try (java.sql.PreparedStatement ps = lab2.db.DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE customers SET status='LOCKED' WHERE customer_id=?")) {
@@ -115,7 +103,6 @@ public class CustomerService {
         }
     }
 
-    // Admin can unlock a locked customer account
     public void unlockAccount(int customerId) throws Exception {
         try (java.sql.PreparedStatement ps = lab2.db.DatabaseConnection.getConnection()
                 .prepareStatement("UPDATE customers SET status='ACTIVE', failed_attempts=0 WHERE customer_id=?")) {
@@ -141,7 +128,6 @@ public class CustomerService {
         dao.updatePin(customerId, hashPin(newPin));
     }
 
-    // Hash PIN using SHA-256 with a random salt
     public static String hashPin(String pin) throws Exception {
         SecureRandom rng = new SecureRandom();
         byte[] salt = new byte[16];
@@ -153,7 +139,6 @@ public class CustomerService {
                Base64.getEncoder().encodeToString(hash);
     }
 
-    // Verify a plain PIN against a stored hash
     public static boolean verifyPin(String plain, String stored) {
         try {
             String[] parts = stored.split(":");

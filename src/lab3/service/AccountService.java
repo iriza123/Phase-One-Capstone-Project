@@ -13,13 +13,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 
-// LAB 3 - Service: business logic for account operations
 public class AccountService {
 
     private final AccountDAO dao = new AccountDAOImpl();
     private final Random rng = new Random();
 
-    // Create a new Wallet account for a customer
     public Account createWallet(int customerId) throws Exception {
         WalletAccount a = new WalletAccount();
         a.setCustomerId(customerId);
@@ -29,8 +27,11 @@ public class AccountService {
         return dao.save(a);
     }
 
-    // Create a new Savings account for a customer
     public Account createSavings(int customerId) throws Exception {
+        boolean alreadyHasSavings = dao.findByCustomerId(customerId).stream()
+            .anyMatch(a -> "SAVINGS".equals(a.getAccountType()) && "ACTIVE".equals(a.getStatus()));
+        if (alreadyHasSavings)
+            throw new Exception("You already have a savings account.");
         SavingsAccount a = new SavingsAccount();
         a.setCustomerId(customerId);
         a.setAccountNumber("20" + String.format("%08d", (long)(rng.nextDouble() * 100_000_000L)));
@@ -61,7 +62,6 @@ public class AccountService {
         dao.updateBalance(id, balance);
     }
 
-    // Deactivate account only if balance is zero
     public void deactivate(int id) throws Exception {
         Account a = getById(id);
         if (a.getBalance().compareTo(BigDecimal.ZERO) > 0)
@@ -69,7 +69,6 @@ public class AccountService {
         dao.updateStatus(id, "INACTIVE");
     }
 
-    // Throw exception if account is not active
     public void checkActive(Account a) throws AccountLockedException {
         if (!"ACTIVE".equals(a.getStatus()))
             throw new AccountLockedException(a.getAccountNumber());
