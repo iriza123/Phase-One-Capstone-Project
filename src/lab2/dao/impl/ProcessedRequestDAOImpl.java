@@ -8,11 +8,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-// LAB 2 - Pure SQL implementation of ProcessedRequestDAO
-// Uses a HashSet (Collection) to cache processed IDs in memory for fast duplicate detection
 public class ProcessedRequestDAOImpl implements ProcessedRequestDAO {
 
-    // In-memory cache using Set (Collections requirement)
     private static final Set<String> cache = new HashSet<>();
 
     @Override

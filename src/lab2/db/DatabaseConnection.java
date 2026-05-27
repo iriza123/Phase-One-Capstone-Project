@@ -2,7 +2,6 @@ package lab2.db;
 
 import java.sql.*;
 
-// LAB 2 - JDBC: Singleton connection to PostgreSQL igirepay_db
 public class DatabaseConnection {
 
     private static final String URL  = "jdbc:postgresql://localhost:5432/igirepay_db";
@@ -19,6 +18,18 @@ public class DatabaseConnection {
         return conn;
     }
 
+    public static void clearAllData() {
+        try (Connection c = getConnection(); Statement s = c.createStatement()) {
+            s.execute("DELETE FROM processed_requests");
+            s.execute("DELETE FROM transactions");
+            s.execute("DELETE FROM accounts");
+            s.execute("DELETE FROM customers");
+            System.out.println("[DB] All data cleared.");
+        } catch (Exception e) {
+            throw new lab3.exception.DatabaseConnectionException("Failed to clear data: " + e.getMessage(), e);
+        }
+    }
+
     public static void close() {
         try {
             if (conn != null && !conn.isClosed()) conn.close();
@@ -29,7 +40,6 @@ public class DatabaseConnection {
         }
     }
 
-    // Creates all 4 tables if they don't exist
     public static void initSchema() {
         try (Connection c = getConnection(); Statement s = c.createStatement()) {
 
@@ -72,28 +82,21 @@ public class DatabaseConnection {
                 "status       VARCHAR(20) NOT NULL," +
                 "processed_at TIMESTAMP   NOT NULL DEFAULT NOW())");
 
-            // Indexes for faster queries
             s.execute("CREATE INDEX IF NOT EXISTS idx_acc_cust ON accounts(customer_id)");
             s.execute("CREATE INDEX IF NOT EXISTS idx_tx_ref   ON transactions(reference_id)");
             s.execute("CREATE INDEX IF NOT EXISTS idx_tx_date  ON transactions(created_at)");
 
-            // BONUS: Add failed_attempts column if it doesn't exist yet (safe migration)
             s.execute("ALTER TABLE customers ADD COLUMN IF NOT EXISTS failed_attempts INT NOT NULL DEFAULT 0");
-
-            // Migration: add role column if it doesn't exist (for existing databases)
             s.execute("ALTER TABLE customers ADD COLUMN IF NOT EXISTS role VARCHAR(20) NOT NULL DEFAULT 'USER'");
 
-            // Migration: remove national_id constraint if column exists (we no longer use it)
+            // national_id was removed from the data model — drop constraints so old DBs don't conflict
             try { s.execute("ALTER TABLE customers ALTER COLUMN national_id DROP NOT NULL"); } catch (Exception ignored) {}
             try { s.execute("ALTER TABLE customers ALTER COLUMN national_id SET DEFAULT ''"); } catch (Exception ignored) {}
-            // Drop the unique constraint on national_id so empty values don't conflict
             try { s.execute("ALTER TABLE customers DROP CONSTRAINT IF EXISTS customers_national_id_key"); } catch (Exception ignored) {}
-            // Also drop any index on national_id
             try { s.execute("DROP INDEX IF EXISTS customers_national_id_key"); } catch (Exception ignored) {}
             try { s.execute("DROP INDEX IF EXISTS idx_customers_national_id"); } catch (Exception ignored) {}
 
-            // Cleanup: remove old demo/seed data that was auto-inserted
-            // Only removes accounts/customers that were created by the seeder (phone pattern 078000000X)
+            // Remove seeder demo data if it was inserted (phone pattern 078000000X)
             try {
                 s.execute("DELETE FROM processed_requests WHERE reference_id LIKE '%-DEMO-%'");
                 s.execute("DELETE FROM transactions WHERE reference_id LIKE '%-DEMO-%'");
@@ -107,7 +110,7 @@ public class DatabaseConnection {
             System.out.println("[DB] Schema ready.");
 
         } catch (Exception e) {
-            System.err.println("[DB] Schema error: " + e.getMessage());
+            throw new lab3.exception.DatabaseConnectionException("Database initialization failed: " + e.getMessage(), e);
         }
     }
 }

@@ -8,7 +8,6 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-// LAB 2 - Pure SQL implementation of CustomerDAO (no ORM, no Spring)
 public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
@@ -131,7 +130,6 @@ public class CustomerDAOImpl implements CustomerDAO {
         }
     }
 
-    // BONUS: increment failed login attempts counter
     @Override
     public boolean incrementFailedAttempts(int id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -141,7 +139,6 @@ public class CustomerDAOImpl implements CustomerDAO {
         }
     }
 
-    // BONUS: reset counter to 0 on successful login
     @Override
     public boolean resetFailedAttempts(int id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()
@@ -151,7 +148,6 @@ public class CustomerDAOImpl implements CustomerDAO {
         }
     }
 
-    // BONUS: get current failed attempts count
     @Override
     public int getFailedAttempts(int id) throws SQLException {
         try (PreparedStatement ps = DatabaseConnection.getConnection()

@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-// LAB 2 - Interface: defines all Account database operations
 public interface AccountDAO {
     Account            save(Account account)                    throws SQLException;
     Optional<Account>  findById(int id)                        throws SQLException;

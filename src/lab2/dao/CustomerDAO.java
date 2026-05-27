@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-// LAB 2 - Interface: defines all Customer database operations
 public interface CustomerDAO {
     Customer    save(Customer customer)                throws SQLException;
     Optional<Customer> findById(int id)               throws SQLException;
@@ -17,7 +16,6 @@ public interface CustomerDAO {
     boolean updatePin(int id, String hashedPin)       throws SQLException;
     boolean delete(int id)                            throws SQLException;
     int     count()                                   throws SQLException;
-    // BONUS: track failed login attempts for account locking
     boolean incrementFailedAttempts(int id)           throws SQLException;
     boolean resetFailedAttempts(int id)               throws SQLException;
     int     getFailedAttempts(int id)                 throws SQLException;
