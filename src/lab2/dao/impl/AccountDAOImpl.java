@@ -11,7 +11,6 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-// LAB 2 - Pure SQL implementation of AccountDAO
 public class AccountDAOImpl implements AccountDAO {
 
     @Override

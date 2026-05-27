@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-// LAB 2 - Interface: defines all Transaction database operations
 public interface TransactionDAO {
     Transaction            save(Transaction t)                          throws SQLException;
     Optional<Transaction>  findByReferenceId(String referenceId)       throws SQLException;
@@ -16,4 +15,5 @@ public interface TransactionDAO {
     List<Transaction>      findByDateRange(LocalDate from, LocalDate to) throws SQLException;
     int                    countToday()                                 throws SQLException;
     double                 sumToday()                                   throws SQLException;
+    int                    countMonthlyWithdrawals(int accountId)      throws SQLException;
 }

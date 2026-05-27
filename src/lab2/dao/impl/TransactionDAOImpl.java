@@ -9,8 +9,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-// LAB 2 - Pure SQL implementation of TransactionDAO
-// FIX: using java.sql.Date explicitly to avoid ambiguity with java.util.Date
 public class TransactionDAOImpl implements TransactionDAO {
 
     @Override
@@ -140,6 +138,19 @@ public class TransactionDAOImpl implements TransactionDAO {
                                   "WHERE DATE(created_at)=CURRENT_DATE AND status='SUCCESS'");
              ResultSet rs = ps.executeQuery()) {
             return rs.next() ? rs.getDouble(1) : 0;
+        }
+    }
+
+    @Override
+    public int countMonthlyWithdrawals(int accountId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM transactions " +
+                     "WHERE from_account_id = ? AND transaction_type = 'WITHDRAW' " +
+                     "AND DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE) " +
+                     "AND status = 'SUCCESS'";
+        try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, accountId);
+            ResultSet rs = ps.executeQuery();
+            return rs.next() ? rs.getInt(1) : 0;
         }
     }
 
