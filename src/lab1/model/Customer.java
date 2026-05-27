@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-// LAB 1 - OOP: Encapsulation. Role: USER or ADMIN. PIN is 5 digits (hashed).
 public class Customer {
 
     private int customerId;
@@ -46,4 +45,9 @@ public class Customer {
     public List<Account> getAccounts()        { return accounts; }
     public void setAccounts(List<Account> v)  { this.accounts = v; }
     public void addAccount(Account a)         { this.accounts.add(a); }
+
+    @Override
+    public String toString() {
+        return "[" + customerId + "] " + getFullName() + " | " + phone + " | " + status;
+    }
 }

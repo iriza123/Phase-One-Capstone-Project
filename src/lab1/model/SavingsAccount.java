@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
-// LAB 1 - OOP: Inheritance. Savings = 1.5% fee, 500K limit, 5 withdrawals/month.
 public class SavingsAccount extends Account {
 
     public static final BigDecimal FEE_RATE       = new BigDecimal("0.015"); // 1.5%

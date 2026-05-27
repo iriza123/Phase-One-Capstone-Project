@@ -3,7 +3,6 @@ package lab1.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-// LAB 1 - OOP: Encapsulation. Represents one financial transaction.
 public class Transaction {
 
     private int transactionId;
@@ -69,4 +68,9 @@ public class Transaction {
     public void setToAccountNumber(String v)   { this.toAccountNumber = v; }
     public String getCustomerName()            { return customerName; }
     public void setCustomerName(String v)      { this.customerName = v; }
+
+    @Override
+    public String toString() {
+        return referenceId + " | " + transactionType + " | " + amount + " RWF | " + status;
+    }
 }

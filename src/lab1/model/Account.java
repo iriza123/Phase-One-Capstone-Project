@@ -3,7 +3,6 @@ package lab1.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-// LAB 1 - OOP: Abstract base class (Abstraction + Encapsulation)
 public abstract class Account {
 
     protected int accountId;
@@ -16,7 +15,6 @@ public abstract class Account {
 
     public Account() {}
 
-    // LAB 1 - Polymorphism: subclasses must override these methods
     public abstract BigDecimal deposit(BigDecimal amount);
     public abstract BigDecimal withdraw(BigDecimal amount) throws Exception;
     public abstract String processTransaction(String type, BigDecimal amount) throws Exception;
