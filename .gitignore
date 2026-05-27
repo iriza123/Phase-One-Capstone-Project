@@ -1,0 +1,26 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+*.class
+
+# Build output
+build/
+dist/
+target/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database credentials — never commit
+src/util/DBConnection.java.bak
+
+# CSV exports
+*.csv
+
+# JavaFX SDK (add your own locally)
+javafx-sdk/
