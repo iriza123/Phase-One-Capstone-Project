@@ -25,7 +25,7 @@ public class SavingsScreen extends BaseScreen {
         card.getChildren().addAll(title, buildRulesBox(), buildAccountsSection(), initMessage());
 
         BorderPane root = wrapInRoot(buildTopBar("Savings"), card);
-        Scene scene = new Scene(root, 740, 660);
+        Scene scene = new Scene(root, 740, 560);
         scene.getStylesheets().add(getClass().getResource("/ui/styles/theme.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("IgirePay - Savings");

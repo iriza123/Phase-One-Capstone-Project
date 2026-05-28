@@ -52,7 +52,7 @@ public class SendMoneyScreen extends BaseScreen {
             initMessage(), sendBtn);
 
         BorderPane root = wrapInRoot(buildTopBar("Send Money"), card);
-        Scene scene = new Scene(root, 700, 660);
+        Scene scene = new Scene(root, 700, 540);
         scene.getStylesheets().add(getClass().getResource("/ui/styles/theme.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("IgirePay - Send Money");

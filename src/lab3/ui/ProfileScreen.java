@@ -98,7 +98,7 @@ public class ProfileScreen extends BaseScreen {
             changePinBtn, initMessage());
 
         BorderPane root = wrapInRoot(buildTopBar("Profile"), card);
-        Scene scene = new Scene(root, 720, 760);
+        Scene scene = new Scene(root, 720, 600);
         scene.getStylesheets().add(getClass().getResource("/ui/styles/theme.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("IgirePay - Profile");

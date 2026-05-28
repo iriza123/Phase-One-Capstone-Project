@@ -48,7 +48,7 @@ public class DepositScreen extends BaseScreen {
             initMessage(), btn);
 
         BorderPane root = wrapInRoot(buildTopBar("Deposit"), card);
-        Scene scene = new Scene(root, 700, 560);
+        Scene scene = new Scene(root, 700, 520);
         scene.getStylesheets().add(getClass().getResource("/ui/styles/theme.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("IgirePay - Deposit");

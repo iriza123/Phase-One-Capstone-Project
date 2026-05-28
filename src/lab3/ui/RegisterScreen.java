@@ -94,7 +94,7 @@ public class RegisterScreen {
         root.getChildren().add(card);
         StackPane.setAlignment(card, Pos.CENTER);
 
-        Scene scene = new Scene(root, 620, 660);
+        Scene scene = new Scene(root, 620, 560);
         scene.getStylesheets().add(getClass().getResource("/ui/styles/theme.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("IgirePay - Register");

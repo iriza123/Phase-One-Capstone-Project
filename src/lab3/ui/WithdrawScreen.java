@@ -53,7 +53,7 @@ public class WithdrawScreen extends BaseScreen {
             initMessage(), btn);
 
         BorderPane root = wrapInRoot(buildTopBar("Withdraw"), card);
-        Scene scene = new Scene(root, 700, 580);
+        Scene scene = new Scene(root, 700, 520);
         scene.getStylesheets().add(getClass().getResource("/ui/styles/theme.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("IgirePay - Withdraw");

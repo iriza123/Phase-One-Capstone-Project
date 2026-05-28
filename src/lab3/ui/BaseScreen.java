@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
 
 public abstract class BaseScreen {
@@ -45,7 +46,7 @@ public abstract class BaseScreen {
     }
 
     protected VBox buildFormCard() {
-        VBox card = new VBox(18);
+        VBox card = new VBox(12);
         card.getStyleClass().add("form-card");
         card.setMaxWidth(560);
         return card;
@@ -95,9 +96,12 @@ public abstract class BaseScreen {
         bp.setTop(topBar);
         StackPane center = new StackPane(content);
         center.setAlignment(Pos.TOP_CENTER);
-        center.setPadding(new Insets(28));
+        center.setPadding(new Insets(18));
         center.setStyle("-fx-background-color:transparent;");
-        bp.setCenter(center);
+        ScrollPane scroll = new ScrollPane(center);
+        scroll.setFitToWidth(true);
+        scroll.setStyle("-fx-background-color:transparent;-fx-background:transparent;-fx-border-color:transparent;");
+        bp.setCenter(scroll);
         return bp;
     }
 }
