@@ -119,6 +119,7 @@ public class AdminDashboardScreen {
             adminTile("Manage\nCustomers",  "#556B2F", () -> new AdminScreen(stage).show()),
             adminTile("All\nTransactions",  "#2980B9", () -> new AdminHistoryScreen(stage).show()),
             adminTile("All\nAccounts",      "#D4A017", () -> new AdminAccountsScreen(stage).show()),
+            adminTile("Loan\nRequests",     "#6D4C41", () -> new AdminLoansScreen(stage).show()),
             adminTile("Reports\n& Export",  "#8E44AD", () -> new AdminReportsScreen(stage).show()),
             adminTile("Reset\nDatabase",    "#C0392B", this::confirmReset)
         );
