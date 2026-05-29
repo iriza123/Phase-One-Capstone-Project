@@ -95,10 +95,8 @@ public class LoanScreen extends BaseScreen {
         reasonField.setPromptText("Why do you need this loan?");
         reasonField.setPrefRowCount(3);
         reasonField.setMaxWidth(460);
-        reasonField.setStyle(
-            "-fx-background-color:rgba(255,255,255,0.1);-fx-text-fill:white;" +
-            "-fx-prompt-text-fill:rgba(255,255,255,0.4);-fx-border-color:rgba(255,255,255,0.2);" +
-            "-fx-border-radius:6;-fx-background-radius:6;-fx-font-family:'Times New Roman';");
+        reasonField.getStyleClass().add("text-area-styled");
+        reasonField.setStyle("-fx-text-fill:white;-fx-prompt-text-fill:rgba(255,255,255,0.4);");
 
         Button submitBtn = new Button("Submit Loan Request");
         submitBtn.getStyleClass().add("btn-primary");
