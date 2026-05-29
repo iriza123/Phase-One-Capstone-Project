@@ -91,8 +91,7 @@ public class AdminAccountsScreen extends BaseScreen {
             { btn.getStyleClass().add("btn-danger");
               btn.setOnAction(e -> {
                   Account a = getTableView().getItems().get(getIndex());
-                  if (!"INACTIVE".equals(a.getStatus())) { showMsg("Only inactive accounts can be deleted.", false); return; }
-                  try { accSvc.deactivate(a.getAccountId()); loadAccounts(); showMsg("Account deleted.", true); }
+                  try { accSvc.deleteAccount(a.getAccountId()); loadAccounts(); showMsg("Account deleted.", true); }
                   catch (Exception ex) { showMsg(ex.getMessage(), false); }
               });
             }
@@ -115,13 +114,7 @@ public class AdminAccountsScreen extends BaseScreen {
 
     private void deleteInactive() {
         try {
-            List<Account> list = accSvc.getAll();
-            int deleted = 0;
-            for (Account a : list) {
-                if ("INACTIVE".equals(a.getStatus())) {
-                    try { accSvc.deactivate(a.getAccountId()); deleted++; } catch (Exception ignored) {}
-                }
-            }
+            int deleted = accSvc.deleteAllInactiveAccounts();
             loadAccounts();
             showMsg(deleted > 0 ? "Deleted " + deleted + " inactive account(s)." : "No inactive accounts found.", deleted > 0);
         } catch (Exception e) { showMsg("Error: " + e.getMessage(), false); }

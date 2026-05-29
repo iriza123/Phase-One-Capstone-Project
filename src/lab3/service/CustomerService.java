@@ -115,6 +115,11 @@ public class CustomerService {
         return dao.findById(id).orElseThrow(() -> new Exception("Customer not found."));
     }
 
+    public Customer getByPhone(String phone) throws Exception {
+        return dao.findByPhone(phone.trim())
+            .orElseThrow(() -> new Exception("No customer found for phone: " + phone));
+    }
+
     public List<Customer> getAll()          throws SQLException { return dao.findAll(); }
     public List<Customer> search(String kw) throws SQLException { return dao.search(kw); }
     public void update(Customer c)          throws Exception    { dao.update(c); }

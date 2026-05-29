@@ -58,6 +58,22 @@ public class AccountService {
     public int count()               throws SQLException { return dao.count(); }
     public BigDecimal totalBalance() throws SQLException { return dao.totalBalance(); }
 
+    public Account getWalletByPhone(String phone) throws Exception {
+        lab1.model.Customer c = new CustomerService().getByPhone(phone);
+        return getByCustomer(c.getCustomerId()).stream()
+            .filter(a -> "WALLET".equals(a.getAccountType()) && "ACTIVE".equals(a.getStatus()))
+            .findFirst()
+            .orElseThrow(() -> new InvalidAccountException("No active wallet found for phone: " + phone));
+    }
+
+    public void deleteAccount(int id) throws SQLException {
+        dao.deleteById(id);
+    }
+
+    public int deleteAllInactiveAccounts() throws SQLException {
+        return dao.deleteAllInactive();
+    }
+
     public void updateBalance(int id, BigDecimal balance) throws SQLException {
         dao.updateBalance(id, balance);
     }

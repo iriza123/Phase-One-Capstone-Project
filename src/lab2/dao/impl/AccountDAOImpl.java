@@ -114,6 +114,23 @@ public class AccountDAOImpl implements AccountDAO {
         }
     }
 
+    @Override
+    public void deleteById(int id) throws SQLException {
+        try (PreparedStatement ps = DatabaseConnection.getConnection()
+                .prepareStatement("DELETE FROM accounts WHERE account_id=?")) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+    @Override
+    public int deleteAllInactive() throws SQLException {
+        try (PreparedStatement ps = DatabaseConnection.getConnection()
+                .prepareStatement("DELETE FROM accounts WHERE status='INACTIVE'")) {
+            return ps.executeUpdate();
+        }
+    }
+
     // Map a ResultSet row to the correct Account subclass
     private Account map(ResultSet rs) throws SQLException {
         String type = rs.getString("account_type");

@@ -25,8 +25,10 @@ public class DepositScreen extends BaseScreen {
     public void show() {
         VBox card = buildFormCard();
 
-        Label title = new Label("Deposit Funds");
+        Label title = new Label("Deposit to Wallet");
         title.setStyle("-fx-font-size:22px;-fx-font-weight:bold;-fx-text-fill:white;-fx-font-family:'Times New Roman';");
+        Label sub = new Label("To add money to Savings, use the Savings screen.");
+        sub.setStyle("-fx-font-size:12px;-fx-text-fill:rgba(255,255,255,0.4);-fx-font-family:'Times New Roman';");
 
         accountCombo = styledCombo("Select account...");
         accountCombo.setOnAction(e -> updateBalance());
@@ -41,7 +43,7 @@ public class DepositScreen extends BaseScreen {
         btn.setMaxWidth(Double.MAX_VALUE);
         btn.setOnAction(e -> handleDeposit());
 
-        card.getChildren().addAll(title,
+        card.getChildren().addAll(title, sub,
             fieldGroup("Account", accountCombo), balanceLabel,
             fieldGroup("Amount (RWF)", amountField),
             fieldGroup("Description", descField),
@@ -60,7 +62,7 @@ public class DepositScreen extends BaseScreen {
         try {
             List<Account> list = accSvc.getByCustomer(SessionManager.getUser().getCustomerId());
             for (Account a : list)
-                if ("ACTIVE".equals(a.getStatus()))
+                if ("WALLET".equals(a.getAccountType()) && "ACTIVE".equals(a.getStatus()))
                     accountCombo.getItems().add(a.getAccountNumber() + " [" + a.getAccountType() + "]");
         } catch (Exception e) { showMsg("Could not load accounts.", false); }
     }

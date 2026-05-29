@@ -128,15 +128,15 @@ public class AdminDashboardScreen {
     private void confirmReset() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Reset Database");
-        alert.setHeaderText("Delete All Data");
+        alert.setHeaderText("Delete All User Data");
         alert.setContentText(
-            "This deletes ALL customers, accounts and transactions — including your admin account.\n" +
-            "You will need to re-register after this.\n\nAre you sure?");
+            "This deletes ALL customers, accounts and transactions except your admin account.\n" +
+            "Your admin account will be kept.\n\nAre you sure?");
         alert.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
-                lab2.db.DatabaseConnection.clearAllData();
-                SessionManager.logout();
-                new LoginScreen(stage).show();
+                int adminId = SessionManager.getUser().getCustomerId();
+                lab2.db.DatabaseConnection.clearDataKeepAdmin(adminId);
+                new AdminDashboardScreen(stage).show();
             }
         });
     }

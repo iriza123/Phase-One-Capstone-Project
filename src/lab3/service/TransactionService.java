@@ -137,6 +137,36 @@ public class TransactionService {
         }
     }
 
+    public Transaction transferToSavings(int walletId, int savingsId,
+                                         BigDecimal amount, String description) throws Exception {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0)
+            throw new InvalidAmountException("Amount must be positive.");
+
+        Account wallet  = accSvc.getById(walletId);
+        Account savings = accSvc.getById(savingsId);
+        accSvc.checkActive(wallet);
+        accSvc.checkActive(savings);
+
+        if (wallet.getBalance().compareTo(amount) < 0)
+            throw new InsufficientBalanceException(
+                "Insufficient wallet balance: " + wallet.getBalance() + " RWF");
+
+        String ref = generateRef("SAV");
+        if (prDAO.isProcessed(ref)) throw new DuplicateTransactionException(ref);
+
+        wallet.withdraw(amount);
+        accSvc.updateBalance(walletId, wallet.getBalance());
+        savings.deposit(amount);
+        accSvc.updateBalance(savingsId, savings.getBalance());
+
+        Transaction tx = new Transaction(ref, walletId, savingsId, "TRANSFER",
+            amount, BigDecimal.ZERO, "SUCCESS",
+            description == null || description.isBlank() ? "Wallet to Savings" : description);
+        txDAO.save(tx);
+        prDAO.markProcessed(ref, "SUCCESS");
+        return tx;
+    }
+
     public List<Transaction> getAll()                                 throws SQLException { return txDAO.findAll(); }
     public List<Transaction> getByAccount(int id)                     throws SQLException { return txDAO.findByAccountId(id); }
     public List<Transaction> getByCustomer(int id)                    throws SQLException { return txDAO.findByCustomerId(id); }

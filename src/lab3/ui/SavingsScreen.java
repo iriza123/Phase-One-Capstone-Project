@@ -2,16 +2,20 @@ package lab3.ui;
 
 import lab1.model.Account;
 import lab3.service.AccountService;
+import lab3.service.TransactionService;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public class SavingsScreen extends BaseScreen {
 
-    private final AccountService accSvc = new AccountService();
+    private final AccountService     accSvc = new AccountService();
+    private final TransactionService txSvc  = new TransactionService();
 
     public SavingsScreen(Stage stage) { super(stage); }
 
@@ -40,37 +44,40 @@ public class SavingsScreen extends BaseScreen {
         Label t = new Label("Savings Account Rules:");
         t.setStyle("-fx-font-weight:bold;-fx-text-fill:#D4A017;-fx-font-family:'Times New Roman';");
         box.getChildren().addAll(t,
+            rule("Money saved must come from your Wallet balance"),
             rule("1.5% fee on every withdrawal"),
             rule("Maximum 500,000 RWF per withdrawal"),
-            rule("Maximum 5 withdrawals per month"),
-            rule("No transfers — use Wallet for transfers"));
+            rule("Maximum 5 withdrawals per month"));
         return box;
     }
 
     private VBox buildAccountsSection() {
         VBox section = new VBox(14);
         try {
-            List<Account> savings = accSvc.getByCustomer(SessionManager.getUser().getCustomerId())
-                .stream().filter(a -> "SAVINGS".equals(a.getAccountType())).toList();
+            int custId = SessionManager.getUser().getCustomerId();
+            List<Account> all     = accSvc.getByCustomer(custId);
+            Optional<Account> savingsOpt = all.stream()
+                .filter(a -> "SAVINGS".equals(a.getAccountType()) && "ACTIVE".equals(a.getStatus()))
+                .findFirst();
+            Optional<Account> walletOpt  = all.stream()
+                .filter(a -> "WALLET".equals(a.getAccountType()) && "ACTIVE".equals(a.getStatus()))
+                .findFirst();
 
-            if (savings.isEmpty()) {
+            if (savingsOpt.isEmpty()) {
                 Label none = new Label("You don't have a savings account yet.");
                 none.setStyle("-fx-text-fill:rgba(255,255,255,0.55);-fx-font-family:'Times New Roman';");
-
                 Button createBtn = new Button("Open Savings Account");
                 createBtn.getStyleClass().add("btn-success");
                 createBtn.setOnAction(e -> {
                     try {
-                        Account a = accSvc.createSavings(SessionManager.getUser().getCustomerId());
+                        Account a = accSvc.createSavings(custId);
                         showMsg("Savings account created: " + a.getAccountNumber(), true);
                         new SavingsScreen(stage).show();
                     } catch (Exception ex) { showMsg(ex.getMessage(), false); }
                 });
                 section.getChildren().addAll(none, createBtn);
             } else {
-                for (Account a : savings) {
-                    section.getChildren().add(buildAccountCard(a));
-                }
+                section.getChildren().add(buildAccountCard(savingsOpt.get(), walletOpt.orElse(null)));
             }
         } catch (Exception e) {
             section.getChildren().add(new Label("Could not load accounts."));
@@ -78,36 +85,62 @@ public class SavingsScreen extends BaseScreen {
         return section;
     }
 
-    private VBox buildAccountCard(Account a) {
+    private VBox buildAccountCard(Account savings, Account wallet) {
         VBox card = new VBox(12);
         card.setStyle(
             "-fx-background-color:rgba(255,255,255,0.08);-fx-background-radius:12;-fx-padding:18;" +
             "-fx-border-color:rgba(39,174,96,0.4);-fx-border-radius:12;-fx-border-width:1;");
 
-        Label num  = new Label("Account:  " + a.getAccountNumber());
+        Label num  = new Label("Account:  " + savings.getAccountNumber());
         num.setStyle("-fx-text-fill:rgba(255,255,255,0.65);-fx-font-family:'Times New Roman';");
 
-        Label bal  = new Label(String.format("Balance:  %,.2f RWF", a.getBalance()));
+        Label bal  = new Label(String.format("Balance:  %,.2f RWF", savings.getBalance()));
         bal.setStyle("-fx-font-size:20px;-fx-font-weight:bold;-fx-text-fill:white;-fx-font-family:'Times New Roman';");
 
-        Label stat = new Label("Status:   " + a.getStatus());
-        stat.setStyle("-fx-text-fill:" + ("ACTIVE".equals(a.getStatus()) ? "#2ECC71" : "#E74C3C") +
-            ";-fx-font-family:'Times New Roman';");
+        Label stat = new Label("Status:   " + savings.getStatus());
+        stat.setStyle("-fx-text-fill:#2ECC71;-fx-font-family:'Times New Roman';");
 
-        Label hint = new Label("To save money, deposit to this account. To access funds, withdraw.");
-        hint.setStyle("-fx-font-size:12px;-fx-text-fill:rgba(255,255,255,0.4);-fx-font-family:'Times New Roman';");
-        hint.setWrapText(true);
+        card.getChildren().addAll(num, bal, stat);
 
-        HBox btns = new HBox(12);
-        Button depositBtn  = new Button("Deposit to Savings");
-        Button withdrawBtn = new Button("Withdraw from Savings");
-        depositBtn.getStyleClass().add("btn-success");
-        withdrawBtn.getStyleClass().add("btn-primary");
-        depositBtn.setOnAction(e  -> new DepositScreen(stage).show());
-        withdrawBtn.setOnAction(e -> new WithdrawScreen(stage).show());
-        btns.getChildren().addAll(depositBtn, withdrawBtn);
+        if (wallet != null) {
+            Label walletBal = new Label("Wallet balance: " + String.format("%,.2f RWF", wallet.getBalance()));
+            walletBal.setStyle("-fx-font-size:12px;-fx-text-fill:rgba(255,255,255,0.45);-fx-font-family:'Times New Roman';");
 
-        card.getChildren().addAll(num, bal, stat, hint, btns);
+            TextField amtField = new TextField();
+            amtField.getStyleClass().add("text-field-styled");
+            amtField.setPromptText("Amount to move from Wallet to Savings (RWF)");
+
+            Button saveBtn = new Button("Move to Savings");
+            saveBtn.getStyleClass().add("btn-success");
+            saveBtn.setMaxWidth(Double.MAX_VALUE);
+            saveBtn.setOnAction(e -> {
+                String amt = amtField.getText().trim();
+                if (amt.isEmpty()) { showMsg("Enter an amount.", false); return; }
+                try {
+                    BigDecimal amount = new BigDecimal(amt.replace(",", ""));
+                    txSvc.transferToSavings(wallet.getAccountId(), savings.getAccountId(), amount, "Wallet to Savings");
+                    showMsg("Moved " + String.format("%,.2f RWF", amount) + " to savings.", true);
+                    amtField.clear();
+                    new SavingsScreen(stage).show();
+                } catch (Exception ex) { showMsg(ex.getMessage(), false); }
+            });
+
+            Button withdrawBtn = new Button("Withdraw from Savings");
+            withdrawBtn.getStyleClass().add("btn-primary");
+            withdrawBtn.setMaxWidth(Double.MAX_VALUE);
+            withdrawBtn.setOnAction(e -> new WithdrawScreen(stage).show());
+
+            card.getChildren().addAll(walletBal, fieldGroup("Save from Wallet", amtField), saveBtn, withdrawBtn);
+        } else {
+            Label noWallet = new Label("No active wallet found. Create a wallet to save money.");
+            noWallet.setStyle("-fx-text-fill:#E74C3C;-fx-font-family:'Times New Roman';");
+            Button withdrawBtn = new Button("Withdraw from Savings");
+            withdrawBtn.getStyleClass().add("btn-primary");
+            withdrawBtn.setMaxWidth(Double.MAX_VALUE);
+            withdrawBtn.setOnAction(e -> new WithdrawScreen(stage).show());
+            card.getChildren().addAll(noWallet, withdrawBtn);
+        }
+
         return card;
     }
 

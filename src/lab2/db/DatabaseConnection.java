@@ -30,6 +30,24 @@ public class DatabaseConnection {
         }
     }
 
+    public static void clearDataKeepAdmin(int adminCustomerId) {
+        try (Connection c = getConnection()) {
+            c.createStatement().execute("DELETE FROM processed_requests");
+            c.createStatement().execute("DELETE FROM transactions");
+            try (PreparedStatement ps = c.prepareStatement(
+                    "DELETE FROM accounts WHERE customer_id != ?")) {
+                ps.setInt(1, adminCustomerId); ps.executeUpdate();
+            }
+            try (PreparedStatement ps = c.prepareStatement(
+                    "DELETE FROM customers WHERE customer_id != ?")) {
+                ps.setInt(1, adminCustomerId); ps.executeUpdate();
+            }
+            System.out.println("[DB] All non-admin data cleared.");
+        } catch (Exception e) {
+            throw new lab3.exception.DatabaseConnectionException("Failed to clear data: " + e.getMessage(), e);
+        }
+    }
+
     public static void close() {
         try {
             if (conn != null && !conn.isClosed()) conn.close();
