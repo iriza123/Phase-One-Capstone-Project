@@ -140,6 +140,15 @@ public class AccountDAOImpl implements AccountDAO {
         }
     }
 
+    @Override
+    public void inactivateByCustomerId(int customerId) throws SQLException {
+        try (PreparedStatement ps = DatabaseConnection.getConnection()
+                .prepareStatement("UPDATE accounts SET status='INACTIVE' WHERE customer_id=?")) {
+            ps.setInt(1, customerId);
+            ps.executeUpdate();
+        }
+    }
+
     // Map a ResultSet row to the correct Account subclass
     private Account map(ResultSet rs) throws SQLException {
         String type = rs.getString("account_type");

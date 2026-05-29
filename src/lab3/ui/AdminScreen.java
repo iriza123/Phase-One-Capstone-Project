@@ -1,6 +1,7 @@
 package lab3.ui;
 
 import lab1.model.Customer;
+import lab3.service.AccountService;
 import lab3.service.CustomerService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,6 +15,7 @@ import java.util.List;
 public class AdminScreen extends BaseScreen {
 
     private final CustomerService custSvc = new CustomerService();
+    private final AccountService  accSvc  = new AccountService();
     private TableView<Customer> table;
 
     public AdminScreen(Stage stage) { super(stage); }
@@ -21,7 +23,6 @@ public class AdminScreen extends BaseScreen {
     @Override
     protected HBox buildTopBar(String title) {
         HBox bar = super.buildTopBar(title);
-        // Override back to go to admin dashboard
         ((Button) bar.getChildren().get(0)).setOnAction(e -> new AdminDashboardScreen(stage).show());
         return bar;
     }
@@ -85,8 +86,11 @@ public class AdminScreen extends BaseScreen {
 
                 deactivateBtn.setOnAction(e -> {
                     Customer c = getTableView().getItems().get(getIndex());
-                    try { custSvc.deactivate(c.getCustomerId()); loadCustomers(); }
-                    catch (Exception ex) { System.err.println(ex.getMessage()); }
+                    try {
+                        custSvc.deactivate(c.getCustomerId());
+                        accSvc.inactivateByCustomerId(c.getCustomerId());
+                        loadCustomers();
+                    } catch (Exception ex) { System.err.println(ex.getMessage()); }
                 });
 
                 unlockBtn.setOnAction(e -> {

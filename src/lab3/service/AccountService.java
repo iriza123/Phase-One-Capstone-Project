@@ -70,6 +70,10 @@ public class AccountService {
         return dao.deleteAllInactive();
     }
 
+    public void inactivateByCustomerId(int customerId) throws SQLException {
+        dao.inactivateByCustomerId(customerId);
+    }
+
     public void updateBalance(int id, BigDecimal balance) throws SQLException {
         dao.updateBalance(id, balance);
     }
