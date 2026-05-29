@@ -11,17 +11,14 @@ import lab3.exception.InvalidAccountException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Random;
 
 public class AccountService {
 
     private final AccountDAO dao = new AccountDAOImpl();
-    private final Random rng = new Random();
 
     public Account createWallet(int customerId) throws Exception {
         WalletAccount a = new WalletAccount();
         a.setCustomerId(customerId);
-        a.setAccountNumber("10" + String.format("%08d", (long)(rng.nextDouble() * 100_000_000L)));
         a.setBalance(BigDecimal.ZERO);
         a.setStatus("ACTIVE");
         return dao.save(a);
@@ -34,7 +31,6 @@ public class AccountService {
             throw new Exception("You already have a savings account.");
         SavingsAccount a = new SavingsAccount();
         a.setCustomerId(customerId);
-        a.setAccountNumber("20" + String.format("%08d", (long)(rng.nextDouble() * 100_000_000L)));
         a.setBalance(BigDecimal.ZERO);
         a.setStatus("ACTIVE");
         return dao.save(a);

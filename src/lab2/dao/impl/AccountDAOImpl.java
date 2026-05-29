@@ -15,10 +15,11 @@ public class AccountDAOImpl implements AccountDAO {
 
     @Override
     public Account save(Account a) throws SQLException {
+        String tempNum = "TMP-" + System.nanoTime();
         String sql = "INSERT INTO accounts(account_number,customer_id,balance,account_type,status,created_at) " +
                      "VALUES(?,?,?,?,?,?) RETURNING account_id";
         try (PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement(sql)) {
-            ps.setString(1, a.getAccountNumber());
+            ps.setString(1, tempNum);
             ps.setInt(2, a.getCustomerId());
             ps.setBigDecimal(3, a.getBalance());
             ps.setString(4, a.getAccountType());
@@ -26,8 +27,16 @@ public class AccountDAOImpl implements AccountDAO {
             ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                a.setAccountId(rs.getInt(1));
+                int id = rs.getInt(1);
+                a.setAccountId(id);
+                a.setAccountNumber(String.valueOf(id));
                 a.setCreatedAt(LocalDateTime.now());
+                try (PreparedStatement upd = DatabaseConnection.getConnection()
+                        .prepareStatement("UPDATE accounts SET account_number=? WHERE account_id=?")) {
+                    upd.setString(1, String.valueOf(id));
+                    upd.setInt(2, id);
+                    upd.executeUpdate();
+                }
             }
         }
         return a;
