@@ -137,8 +137,9 @@ public class DashboardScreen {
             {"DEPOSIT",    "#27AE60", "Deposit"},
             {"WITHDRAW",   "#C0392B", "Withdraw"},
             {"SAVINGS",    "#2980B9", "Savings"},
+            {"LOANS",      "#6D4C41", "Loans"},
             {"HISTORY",    "#8E44AD", "History"},
-            {"REPORTS",    "#6D4C41", "Reports"},
+            {"REPORTS",    "#16A085", "Reports"},
             {"PROFILE",    "#556B2F", "Profile"}
         };
         for (int i = 0; i < actions.length; i++) {
@@ -207,6 +208,7 @@ public class DashboardScreen {
             case "Withdraw"   -> new WithdrawScreen(stage).show();
             case "Savings"    -> new SavingsScreen(stage).show();
             case "History"    -> new HistoryScreen(stage).show();
+            case "Loans"      -> new LoanScreen(stage).show();
             case "Reports"    -> new ReportsScreen(stage).show();
             case "Profile"    -> new ProfileScreen(stage).show();
         }

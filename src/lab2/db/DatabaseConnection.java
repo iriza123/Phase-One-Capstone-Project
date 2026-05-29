@@ -35,6 +35,10 @@ public class DatabaseConnection {
             c.createStatement().execute("DELETE FROM processed_requests");
             c.createStatement().execute("DELETE FROM transactions");
             try (PreparedStatement ps = c.prepareStatement(
+                    "DELETE FROM loans WHERE customer_id != ?")) {
+                ps.setInt(1, adminCustomerId); ps.executeUpdate();
+            }
+            try (PreparedStatement ps = c.prepareStatement(
                     "DELETE FROM accounts WHERE customer_id != ?")) {
                 ps.setInt(1, adminCustomerId); ps.executeUpdate();
             }
@@ -99,6 +103,20 @@ public class DatabaseConnection {
                 "reference_id VARCHAR(50) UNIQUE NOT NULL," +
                 "status       VARCHAR(20) NOT NULL," +
                 "processed_at TIMESTAMP   NOT NULL DEFAULT NOW())");
+
+            s.execute("CREATE TABLE IF NOT EXISTS loans(" +
+                "loan_id      SERIAL        PRIMARY KEY," +
+                "customer_id  INT           NOT NULL REFERENCES customers(customer_id) ON DELETE CASCADE," +
+                "account_id   INT           NOT NULL REFERENCES accounts(account_id)   ON DELETE CASCADE," +
+                "amount       NUMERIC(15,2) NOT NULL," +
+                "status       VARCHAR(20)   NOT NULL DEFAULT 'PENDING'," +
+                "reason       TEXT," +
+                "notes        TEXT," +
+                "requested_at TIMESTAMP     NOT NULL DEFAULT NOW()," +
+                "processed_at TIMESTAMP)");
+
+            s.execute("CREATE INDEX IF NOT EXISTS idx_loans_cust   ON loans(customer_id)");
+            s.execute("CREATE INDEX IF NOT EXISTS idx_loans_status ON loans(status)");
 
             s.execute("CREATE INDEX IF NOT EXISTS idx_acc_cust ON accounts(customer_id)");
             s.execute("CREATE INDEX IF NOT EXISTS idx_tx_ref   ON transactions(reference_id)");
