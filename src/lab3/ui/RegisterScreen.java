@@ -91,10 +91,15 @@ public class RegisterScreen {
             phoneGroup,
             pinGroup, messageLabel, btnRow);
 
-        root.getChildren().add(card);
-        StackPane.setAlignment(card, Pos.CENTER);
+        ScrollPane scroll = new ScrollPane(card);
+        scroll.setFitToWidth(true);
+        scroll.setStyle("-fx-background-color:transparent;-fx-background:transparent;-fx-border-color:transparent;");
+        scroll.setPadding(new Insets(40, 60, 40, 60));
 
-        Scene scene = new Scene(root, 620, 560);
+        root.getChildren().add(scroll);
+        StackPane.setAlignment(scroll, Pos.CENTER);
+
+        Scene scene = new Scene(root, 620, 600);
         scene.getStylesheets().add(getClass().getResource("/ui/styles/theme.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("IgirePay - Register");
